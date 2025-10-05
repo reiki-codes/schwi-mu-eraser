@@ -40,12 +40,21 @@ serve(async (req) => {
     }
 
     console.log("Detecting people in image:", imageUrl);
+    const MODEL_ID = "schananas/grounded_sam:4b4974f26b5c00e6205cf1b50426f8d3c1266a87c1be58a2d7168b49e1f8221d";
 
     // 3️⃣ Aktuelles YOLOv8 Modell verwenden
     const output = await replicate.run(
-      "meta/sam-2:fe97b453d0628e93297a7a508f7586a076717f9035174092b76174a7ed6a21e4",
+      MODEL_ID,
       {
-        input: { image: imageUrl },
+        input: {
+          image: imageUrl,
+          // Fügen Sie den erforderlichen Text-Prompt hinzu, um "person" zu erkennen
+          text_prompt: "person", 
+          // Optionale zusätzliche Parameter für bessere Ergebnisse:
+          // box_threshold: 0.3, 
+          // text_threshold: 0.25,
+          // output_mode: "mask",
+        },
       },
     );
 

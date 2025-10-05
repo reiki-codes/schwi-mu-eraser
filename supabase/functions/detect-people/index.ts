@@ -12,27 +12,36 @@ serve(async (req) => {
   }
 
   try {
+    // 1️⃣ API-Key aus Secrets holen
     const REPLICATE_API_KEY = Deno.env.get('REPLICATE_API_KEY');
     if (!REPLICATE_API_KEY) {
       throw new Error('REPLICATE_API_KEY is not set');
     }
 
     const replicate = new Replicate({ auth: REPLICATE_API_KEY });
-    const { imageUrl } = await req.json();
 
+    // 2️⃣ JSON Body prüfen
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON" }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+
+    const { imageUrl } = body;
     if (!imageUrl) {
       return new Response(
-        JSON.stringify({ error: "Missing required field: imageUrl" }), 
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        }
+        JSON.stringify({ error: "Missing required field: imageUrl" }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
 
     console.log("Detecting people in image:", imageUrl);
-    
-    // Use YOLO for person detection
+
+    // 3️⃣ Aktuelles YOLOv8 Modell verwenden
     const output = await replicate.run(
       "lucataco/yolo-v8:6c8c6aebee9f8c15e9cf3421b476ab8e5f9c51d1b0a1e0eac1f1dbbc3e2d7d94",
       {
@@ -45,16 +54,17 @@ serve(async (req) => {
     );
 
     console.log("Detection response:", output);
-    
+
     return new Response(JSON.stringify({ detections: output }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
+
   } catch (error) {
     console.error("Error in detect-people function:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
 });

@@ -43,7 +43,7 @@ serve(async (req) => {
     const MODEL_ID = "schananas/grounded_sam:4b4974f26b5c00e6205cf1b50426f8d3c1266a87c1be58a2d7168b49e1f8221d";
 
     // 3️⃣ Aktuelles YOLOv8 Modell verwenden
-    const output = await replicate.run(
+    const output = await replicate.run(test - deploy not working
       MODEL_ID,
       {
         input: {

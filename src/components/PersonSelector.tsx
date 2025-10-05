@@ -32,7 +32,7 @@ export const PersonSelector = ({ imageUrl, onPersonRemoved, onBack }: PersonSele
   const detectPeople = async () => {
     setDetecting(true);
     try {
-      const response = await fetch("/api/detect-people", {
+      const response = await fetch("pages/api/detect-people", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ imageUrl })

@@ -34,10 +34,12 @@ serve(async (req) => {
     
     // Use YOLO for person detection
     const output = await replicate.run(
-      "andreasjansson/yolov3:703fb29399f6d99786ca35d1e9a808f07ec1c1ed6e5766e81a51ff71a1c9e4eb",
+      "lucataco/yolo-v8:6c8c6aebee9f8c15e9cf3421b476ab8e5f9c51d1b0a1e0eac1f1dbbc3e2d7d94",
       {
         input: {
           image: imageUrl,
+          confidence: 0.25,
+          classes: "person"
         }
       }
     );

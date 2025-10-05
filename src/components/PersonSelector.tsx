@@ -32,15 +32,22 @@ export const PersonSelector = ({ imageUrl, onPersonRemoved, onBack }: PersonSele
   const detectPeople = async () => {
     setDetecting(true);
     try {
-      const { data, error } = await supabase.functions.invoke('detect-people', {
-        body: { imageUrl }
+      const response = await fetch("/api/detect-people", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl })
       });
-
-      if (error) throw error;
-
-      const peopleDetections = data.detections.filter((d: Detection) => 
+      
+      if (!response.ok) {
+        throw new Error(`Detection failed: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      const peopleDetections = result.detections.filter((d: Detection) => 
         d.label === 'person' && d.score > 0.5
       );
+
       
       setDetections(peopleDetections);
       

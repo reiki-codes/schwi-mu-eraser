@@ -43,14 +43,10 @@ serve(async (req) => {
 
     // 3️⃣ Aktuelles YOLOv8 Modell verwenden
     const output = await replicate.run(
-      "lucataco/yolo-v8:6c8c6aebee9f8c15e9cf3421b476ab8e5f9c51d1b0a1e0eac1f1dbbc3e2d7d94",
+      "meta/sam-2:fe97b453d0628e93297a7a508f7586a076717f9035174092b76174a7ed6a21e4",
       {
-        input: {
-          image: imageUrl,
-          confidence: 0.25,
-          classes: "person"
-        }
-      }
+        input: { image: imageUrl },
+      },
     );
 
     console.log("Detection response:", output);
